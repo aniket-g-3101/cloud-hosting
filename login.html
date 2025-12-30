@@ -2,99 +2,189 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Appwrite Form</title>
+  <title>Contact Form</title>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
+      margin: 0;
+      font-family: "Inter", Arial, sans-serif;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
     }
 
-    .box {
-      background: white;
-      padding: 25px;
-      width: 350px;
-      border-radius: 8px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    .card {
+      background: #ffffff;
+      width: 380px;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
+      color: #1f2937;
     }
 
-    input, textarea, button {
+    p {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+
+    input,
+    textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    textarea {
+      resize: none;
+      min-height: 90px;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
     }
 
     button {
-      background: #4f46e5;
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 600;
       color: white;
       border: none;
+      border-radius: 10px;
       cursor: pointer;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
 
     button:hover {
-      background: #4338ca;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 12px;
+      color: #9ca3af;
     }
   </style>
 </head>
+
 <body>
 
-  <div class="box">
-    <h2>Contact Form</h2>
+  <div class="card">
+    <h2>Contact Us</h2>
+    <p>We’d love to hear from you</p>
+
     <form id="form">
-      <input type="text" id="name" placeholder="Name" required>
-      <input type="email" id="email" placeholder="Email" required>
-      <textarea id="message" placeholder="Message"></textarea>
-      <button type="submit">Submit</button>
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Enter your name" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+      </div>
+
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" placeholder="Write your message..."></textarea>
+      </div>
+
+      <button type="submit">Send Message</button>
     </form>
+
+    <div class="footer-text">
+      Powered by Appwrite
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
-<script>
-  const client = new Appwrite.Client();
-  const databases = new Appwrite.Databases(client);
+  <script>
+    const client = new Appwrite.Client();
+    const databases = new Appwrite.Databases(client);
 
-  client
-    .setEndpoint("https://cloud.appwrite.io/v1")
-    .setProject("6953c57b00139357ab68");
+    client
+      .setEndpoint("https://cloud.appwrite.io/v1")
+      .setProject("6953c57b00139357ab68");
 
-  const form = document.getElementById("form");
+    const form = document.getElementById("form");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    const nameValue = document.getElementById("name").value.trim();
-    const emailValue = document.getElementById("email").value.trim();
-    const messageValue = document.getElementById("message").value.trim();
+      const nameValue = document.getElementById("name").value.trim();
+      const emailValue = document.getElementById("email").value.trim();
+      const messageValue = document.getElementById("message").value.trim();
 
-    try {
-      await databases.createDocument(
-        "6953c59d0030f629ebcb",          // Database ID (correct)
-        "submissions",     // Collection ID (important)
-        Appwrite.ID.unique(),
-        {
-          name: nameValue,
-          email: emailValue,
-          message: messageValue
-        }
-      );
+      try {
+        await databases.createDocument(
+          "6953c59d0030f629ebcb",
+          "submissions",
+          Appwrite.ID.unique(),
+          {
+            name: nameValue,
+            email: emailValue,
+            message: messageValue
+          }
+        );
 
-      alert("Form submitted successfully!");
-      form.reset();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  });
-</script>
-
+        alert("Form submitted successfully!");
+        form.reset();
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      }
+    });
+  </script>
 
 </body>
 </html>
