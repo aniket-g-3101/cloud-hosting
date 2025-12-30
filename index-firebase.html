@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Firebase Form</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      width: 380px;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h2>Contact Form</h2>
+
+    <form id="form">
+      <input id="name" placeholder="Name" required>
+      <input id="email" type="email" placeholder="Email" required>
+      <textarea id="message" placeholder="Message"></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBtvFPFjoKl5Fla8_058PUtB3WLmDd31ys",
+    authDomain: "formsubmission-cb1e4.firebaseapp.com",
+    projectId: "formsubmission-cb1e4",
+    storageBucket: "formsubmission-cb1e4.firebasestorage.app",
+    messagingSenderId: "16422707306",
+    appId: "1:16422707306:web:7c4d3af05f37d2a75b6a13",
+    measurementId: "G-Q94N3ZRF7Z"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  getAnalytics(app);
+
+  // Initialize Firestore
+  const db = getFirestore(app);
+
+  // Form submit logic
+  const form = document.getElementById("form");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
+
+    try {
+      await addDoc(collection(db, "submissions"), {
+        name,
+        email,
+        message,
+        createdAt: new Date()
+      });
+
+      alert("Form submitted successfully!");
+      form.reset();
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  });
+</script>
+</body>
+</html>
