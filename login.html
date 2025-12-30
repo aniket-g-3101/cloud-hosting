@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Appwrite Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 25px;
+      width: 350px;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4338ca;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>Contact Form</h2>
+    <form id="form">
+      <input type="text" id="name" placeholder="Name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <textarea id="message" placeholder="Message"></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+  <script>
+    const client = new Appwrite.Client();
+    const databases = new Appwrite.Databases(client);
+
+    client
+      .setEndpoint("https://cloud.appwrite.io/v1")
+      .setProject("6953c57b00139357ab68");
+
+    document.getElementById("form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      await databases.createDocument(
+        //database id
+        "6953c59d0030f629ebcb",
+        //collection id
+        "submissions",
+        Appwrite.ID.unique(),
+        {
+          name: name.value,
+          email: email.value,
+          message: message.value
+        }
+      );
+
+      alert("Form submitted successfully!");
+      e.target.reset();
+    });
+  </script>
+
+</body>
+</html>
